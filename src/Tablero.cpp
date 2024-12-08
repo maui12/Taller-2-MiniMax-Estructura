@@ -79,57 +79,59 @@ public:
     }
 
     void iniciarJuego() {
+        limpiarTablero();
+
+        int jugadorActual;
+        do {
+            std::cout << "Quien empieza el juego?(1:Humano, 2:IA): ";
+            std::cin >> jugadorActual;
+            if (jugadorActual != 1 && jugadorActual != 2) {
+                std::cerr << "Opcion invalida elige 1 o 2\n";
+            }
+        } while (jugadorActual != 1 && jugadorActual != 2);
+
         while (true) {
             mostrarTablero();
-            if (chequearVictoria(1)) {
-                std::cout << "La IA gana!" << std::endl;
-                break;
-            }
-            if (chequearVictoria(2)) {
-                std::cout << "El jugador gana!!" << std::endl;
-                break;
-            }
-            if (chequearEmpate()) {
-                std::cout << "Es un empate!" << std::endl;
-                break;
-            }
 
-            Movimiento movimiento = minimax(9, INT_MIN, INT_MAX, true);
-            hacerMovimiento(movimiento.x, movimiento.y, 1);
-
-            mostrarTablero();
 
             if (chequearVictoria(1)) {
                 std::cout << "La IA gana!" << std::endl;
                 break;
             }
-            if (chequearEmpate()) {
-                std::cout << "Es un empate!" << std::endl;
-                break;
-            }
-
-            //turno jugador
-            int x, y;
-            bool movimientoValido;
-            do {
-                std::cout << "Tu turno\nIngresa fila y columna (0-2): Fila: ";
-                std::cin >> x;
-                std::cout << "Columna: ";
-                std::cin >> y;
-                movimientoValido = hacerMovimiento(x, y, 2);
-                if (!movimientoValido)
-                    std::cerr << "Movimiento invalido intenta nuevamente.\n";
-            } while (!movimientoValido);
-
             if (chequearVictoria(2)) {
-                mostrarTablero();
-                std::cout << "El jugador gana!!" << std::endl;
+                std::cout << "El jugador gana!" << std::endl;
                 break;
             }
             if (chequearEmpate()) {
-                mostrarTablero();
                 std::cout << "Es un empate!" << std::endl;
                 break;
+            }
+
+            if (jugadorActual == 1) {
+                //turno del jugador
+                int x, y;
+                bool movimientoValido;
+                do {
+                    std::cout << "Tu turno\nIngresa fila y columna (0-2):\n";
+                    std::cout << "Fila: ";
+                    std::cin >> x;
+                    std::cout << "Columna: ";
+                    std::cin >> y;
+                    movimientoValido = hacerMovimiento(x, y, 2);
+                    if (!movimientoValido)
+                        std::cerr << "Movimiento invalido intenta nuevamente.\n";
+                } while (!movimientoValido);
+
+                //cambiar al turno de la IA
+                jugadorActual = 2;
+            } else {
+                //turno de la IA
+                std::cout << "Turno de la IA...\n";
+                Movimiento movimiento = minimax(9, INT_MIN, INT_MAX, true);
+                hacerMovimiento(movimiento.x, movimiento.y, 1);
+
+                //cambiar al turno del jugador humano
+                jugadorActual = 1;
             }
         }
     }
@@ -139,7 +141,6 @@ public:
             while (true) {
                 mostrarTablero();
 
-                // Verificar si hay un ganador o empate antes de cada turno
                 if (chequearVictoria(1)) {
                     std::cout << "Jugador 1 (X) gana!" << std::endl;
                     break;
@@ -156,9 +157,8 @@ public:
                 int x, y;
                 bool movimientoValido;
                 do {
-                    std::cout << "Turno del jugador " << jugadorActual
-                              << (jugadorActual == 1 ? " (X)" : " (O)") << ".\n";
-                    std::cout << "Ingresa fila y columna (0-2): Fila: ";
+                    std::cout << "Turno del jugador " << jugadorActual << (jugadorActual == 1 ? " (X)" : " (O)") << ".\n";
+                    std::cout << "Ingresa fila y columna (0-2): \nFila: ";
                     std::cin >> x;
                     std::cout << "Columna: ";
                     std::cin >> y;
@@ -179,7 +179,7 @@ private:
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
-                if (tablero[i][j] == 0) { // Espacio vacío
+                if (tablero[i][j] == 0) { //espacio vacio
                     tablero[i][j] = esMaximizador ? 1 : 2;
 
                     int puntaje = minimaxRecursivo(profundidad - 1, alfa, beta, !esMaximizador);
