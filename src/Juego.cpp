@@ -6,72 +6,82 @@
 #include "MiniMax.cpp"
 
 class Juego {
-private:
-    Tablero tablero;
-    char turnoActual;
-public:
-    Juego() : turnoActual('O') {}
+	private:
+		Tablero tablero;
+		char turnoActual; //guarda O o X dependiendo del turno de quien
 
-    void jugarContraIA() {
-        while (true) {
-            tablero.imprimir();
+	public:
+		Juego() : turnoActual('O') {}
 
-            if (turnoActual == 'O') {
-                turnoHumano();
-            } else {
-                turnoIA();
-            }
+		void jugarContraIA() {
+			while (true) {
+				tablero.imprimir();
 
-            if (tablero.verificarVictoria(turnoActual)) {
-                tablero.imprimir();
-                cout << "¡" << (turnoActual == 'O' ? "Jugador" : "IA") << " gana!" << endl;
-                break;
-            } else if (tablero.lleno()) {
-                tablero.imprimir();
-                cout << "¡Es un empate!" << endl;
-                break;
-            }
+				if (turnoActual == 'O') {
+					cout << "Tu turno" << endl;
+					turnoHumano();
+				} else {
+					cout << "Turno de la IA" << endl;
+					turnoIA();
+				}
 
-            cambiarTurno();
-        }
-    }
+				if (tablero.verificarVictoria(turnoActual)) {
+					tablero.imprimir();
+					cout << "¡" << (turnoActual == 'O' ? "Jugador":"IA") << " gana!" << endl;
+					tablero.limpiarTablero();
+					break;
+				} else if (tablero.lleno()) {
+					tablero.imprimir();
+					cout << "¡Es un empate!" << endl;
+					tablero.limpiarTablero();
+					break;
+				}
+
+				cambiarTurno();
+			}
 
 
-    void jugarDosJugadores() {
-        while (true) {
-            tablero.imprimir();
-            cout << "Turno del jugador " << (turnoActual == 'O' ? "1 (O)" : "2 (X)") << endl;
-            turnoHumano();
+		}
 
-            if (tablero.verificarVictoria(turnoActual)) {
-                tablero.imprimir();
-                cout << "¡El jugador " << (turnoActual == 'O' ? "1 (O)" : "2 (X)") << " gana!" << endl;
-                break;
-            } else if (tablero.lleno()) {
-                tablero.imprimir();
-                cout << "¡Es un empate!" << endl;
-                break;
-            }
 
-            cambiarTurno();
-        }
-    }
-private:
-    void turnoHumano() {
-        int fila, columna;
-        do {
-            cout << "Ingresa tu movimiento (fila y columna): ";
-            cin >> fila >> columna;
-        } while (!tablero.movimientoValido(fila, columna));
-        tablero.realizarMovimiento(fila, columna, turnoActual);
-    }
+		void jugarDosJugadores() {
+			while (true) {
+				tablero.imprimir();
+				cout << "Turno del jugador " << (turnoActual == 'O' ? "1 (O)" : "2 (X)") << endl;
+				turnoHumano();
 
-    void turnoIA() {
-        Minimax minimax(tablero);
-        pair<int, int> mejorMovimiento = minimax.calcularMejorMovimiento();
-        tablero.realizarMovimiento(mejorMovimiento.first, mejorMovimiento.second, 'X');
-    }
-    void cambiarTurno() {
-        turnoActual = (turnoActual == 'O') ? 'X' : 'O';
-    }
+				if (tablero.verificarVictoria(turnoActual)) {
+					tablero.imprimir();
+					cout << "¡El jugador " << (turnoActual == 'O' ? "1 (O)" : "2 (X)") << " gana!" << endl;
+					tablero.limpiarTablero();
+					break;
+				} else if (tablero.lleno()) {
+					tablero.imprimir();
+					cout << "¡Es un empate!" << endl;
+					tablero.limpiarTablero();
+					break;
+				}
+				cambiarTurno();
+		   }
+		}
+	private:
+		void turnoHumano() {
+			int fila, columna;
+			do {
+				cout << "Ingresa tu movimiento: Fila: ";
+				cin >> fila;
+				cout << "Columna: ";
+				cin >> columna;
+			} while (!tablero.movimientoValido(fila, columna));
+			tablero.realizarMovimiento(fila, columna, turnoActual);
+		}
+
+		void turnoIA() {
+			Minimax minimax(tablero);
+			pair<int, int> mejorMovimiento = minimax.calcularMejorMovimiento();
+			tablero.realizarMovimiento(mejorMovimiento.first, mejorMovimiento.second, 'X');
+		}
+		void cambiarTurno() {
+			turnoActual = (turnoActual == 'O') ? 'X' : 'O';
+		}
 };
