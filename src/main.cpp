@@ -1,9 +1,9 @@
 #include <iostream>
-#include "Juego.cpp"
+#include "Tablero.cpp"
 using namespace std;
 
 int main() {
-    Juego juego;
+    Tablero juego;
     int opcion;
     do {
 		cout << "Bienvenido al juego del gato.\n";
@@ -14,9 +14,11 @@ int main() {
 		cin >> opcion;
 
 		if (opcion == 1) {
-			juego.jugarContraIA();
+			juego.iniciarJuego();
+			juego.limpiarTablero();
 		} else if (opcion == 2) {
-			juego.jugarDosJugadores();
+			juego.iniciarJuego2J();
+			juego.limpiarTablero();
 		}
     }
     while(opcion!=3);
